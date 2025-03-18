@@ -18,13 +18,13 @@ with open(args.input, "rb") as file:
         if data[:0x10] == MAGIC:
             ld = int.from_bytes(data[0x18:0x1C], "little")
             data += file.read(ld - 0x200)
-            if int.from_bytes(data[0x34:0x36], "little") != 0xFFFF:
+            rst = int.from_bytes(data[0x20:0x24], "little")
+            rlg = int.from_bytes(data[0x24:0x28], "little")
+            if rst != 0xFFFFFFFF and rlg != 0xFFFFFFFF:
                 shift = int.from_bytes(data[0x36:0x38], "little")
                 if data[shift + 2 : shift + 4] in (b"\xFF\x4F", b"\xFF\xCF"):
                     vs = int.from_bytes(data[shift : shift + 2], "little")
                     region = int.from_bytes(data[0x14:0x16], "little")
-                    rst = int.from_bytes(data[0x20:0x24], "little")
-                    rlg = int.from_bytes(data[0x24:0x28], "little")
                     array[region] = array.get(region, {})
                     array[region][rst] = array[region].get(rst, bytearray(rlg))
                     off = shift + 0x4
