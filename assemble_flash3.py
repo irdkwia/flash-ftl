@@ -34,8 +34,9 @@ with open(args.input, "rb") as file:
                         ed = data[off] * shift
                         # TODO: This needs to be applied somehow
                         # if v & 0x8000 and vs >= 3: st += 256 * shift
-                        ofs = (v & 0x3FFF) * shift
-                        array[region][rst][ofs : ofs + ed] = data[st : st + ed]
+                        if v & 0x4000:
+                            ofs = (v & 0x3FFF) * shift
+                            array[region][rst][ofs : ofs + ed] = data[st : st + ed]
                         off += 4
         data = file.read(0x200)
 
